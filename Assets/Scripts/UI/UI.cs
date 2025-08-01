@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class UI : MonoBehaviour
+public abstract class UI : MonoBehaviour
 {
     protected Dictionary<Type, UnityEngine.Object[]> _objectDictionarry = new Dictionary<Type, UnityEngine.Object[]>();
+
+    public abstract void Init();
 
     protected void Bind<T>(Type type) where T : UnityEngine.Object
     {
@@ -31,7 +32,7 @@ public class UI : MonoBehaviour
         return objects[index] as T;
     }
 
-    public static void AddUIEvent(GameObject go, Action<PointerEventData> action, Define.UIEvent type = Define.UIEvent.Click)
+    public static void BindEvent(GameObject go, Action<PointerEventData> action, Define.UIEvent type = Define.UIEvent.Click)
     {
         UIEventHandler evt = Utility.GetOrAddComponent<UIEventHandler>(go);
 
@@ -49,6 +50,5 @@ public class UI : MonoBehaviour
             default:
                 break;
         }
-
     }
 }
