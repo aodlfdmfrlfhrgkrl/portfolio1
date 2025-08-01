@@ -1,22 +1,14 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class UI : MonoBehaviour
 {
-    Dictionary<Type, UnityEngine.Object[]> _objectDictionarry = new Dictionary<Type, UnityEngine.Object[]>();
+    protected Dictionary<Type, UnityEngine.Object[]> _objectDictionarry = new Dictionary<Type, UnityEngine.Object[]>();
 
-    enum Button
-    {
-        PointButton
-    }
-    enum Text
-    {
-        PointText,
-        ScoreText
-    }
-
-    void Bind<T>(Type type) where T : UnityEngine.Object
+    protected void Bind<T>(Type type) where T : UnityEngine.Object
     {
         string[] names = Enum.GetNames(type);
         UnityEngine.Object[] objects = new UnityEngine.Object[names.Length];
@@ -27,5 +19,36 @@ public class UI : MonoBehaviour
             objects[i] = Utility.FindChild<T>(gameObject, names[i], true);
 
         }
+    }
+
+    protected T Get<T>(int index) where T : UnityEngine.Object
+    {
+        UnityEngine.Object[] objects = null;
+
+        if(_objectDictionarry.TryGetValue(typeof(T), out objects) == false)
+            return null;
+
+        return objects[index] as T;
+    }
+
+    public static void AddUIEvent(GameObject go, Action<PointerEventData> action, Define.UIEvent type = Define.UIEvent.Click)
+    {
+        UIEventHandler evt = Utility.GetOrAddComponent<UIEventHandler>(go);
+
+        switch (type)
+        {
+            case Define.UIEvent.Click:
+                evt.OnClickHandler -= action;
+                evt.OnClickHandler += action;
+                break;
+            case Define.UIEvent.Drag:
+                evt.OnDragHandler -= action;
+                evt.OnDragHandler += action;
+                break;
+
+            default:
+                break;
+        }
+
     }
 }
