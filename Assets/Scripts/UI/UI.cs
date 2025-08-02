@@ -36,6 +36,7 @@ public abstract class UI : MonoBehaviour
     {
         UIEventHandler evt = Utility.GetOrAddComponent<UIEventHandler>(go);
 
+
         switch (type)
         {
             case Define.UIEvent.Click:
